@@ -1,4 +1,5 @@
 ﻿using EveryDay.Calc.Calculation;
+using System;
 using SConsole = System.Console;
 
 namespace EveryDay.Calc.Console
@@ -7,43 +8,65 @@ namespace EveryDay.Calc.Console
     {
         static void Main(string[] args)
         {
-            //SConsole.WriteLine("test");
-
+            printInformation();
+            string s;
+            s = SConsole.ReadLine();
+            args = s.Split(' ');
             var oper = args[0];
-            var x = Str2Int(args[1]);
-            var y = Str2Int(args[2]);
-
+           
             var calc = new Calculator();
-            int result = 0;
 
-            if (oper == "sum")
+            //Определение арифметической операции и вывод результата из соответствующей функции
+            if (String.Equals(oper, "sum", StringComparison.CurrentCultureIgnoreCase))
             {
-                result = calc.Sum(x, y);
+                SConsole.WriteLine(calc.Sum(args[1], args[2]));
             }
-            else if (oper == "div")
+            else if (String.Equals(oper, "div", StringComparison.CurrentCultureIgnoreCase))
             {
-                result = calc.Div(x, y);
+                SConsole.WriteLine(calc.Div(args[1], args[2]));
+            }
+            else if (String.Equals(oper, "sqr", StringComparison.CurrentCultureIgnoreCase))
+            {
+                SConsole.WriteLine(calc.Sqr(args[1]));
+            }
+            else if (String.Equals(oper, "sqrt", StringComparison.CurrentCultureIgnoreCase))
+            {
+                double solve = calc.Sqrt(args[1]);
+                if (solve > 0)
+                    SConsole.WriteLine("{0}, {1}", solve, -solve);
+                else if (solve == 0)
+                    SConsole.WriteLine(solve);
+                else
+                    SConsole.WriteLine("{0}*i, {1}*i, где i^2 = -1", solve, -solve);
+            }
+            else if (String.Equals(oper, "mult", StringComparison.CurrentCultureIgnoreCase))
+            {
+                SConsole.WriteLine(calc.Mult(args));
+            }
+            else if ((String.Equals(oper, "percof", StringComparison.CurrentCultureIgnoreCase)))
+            {
+                SConsole.WriteLine(calc.PercOf(args[1], args[2]));
             }
             else
             {
                 SConsole.WriteLine("Нет такой операции");
             }
 
-            SConsole.WriteLine(result.ToString());
-
             SConsole.ReadKey();
         }
 
-        private static int Str2Int(string str)
+        private static void printInformation()
         {
-            var x = int.Parse(str);
-            int y;
-            if (!int.TryParse(str, out y))
-            {
-                SConsole.WriteLine("Не удалось преобразовать \"{0}\" в число", str);
-            }
-
-            return y;
+            SConsole.WriteLine("Введите входные данные в формате: \"операция операнды\"");
+            SConsole.WriteLine();
+            SConsole.WriteLine("Возможные перации и операнды:");
+            SConsole.WriteLine("\"sum слагаемое1 слагаемое2\" - складывает слагаемое1 и слагаемое2");
+            SConsole.WriteLine("\"div делимое делитель\" - делит делимое на делитель");
+            SConsole.WriteLine("\"sqr число\" - возводит число в квадрат");
+            SConsole.WriteLine("\"sqrt число\" - извлекает квадратный корень из числа");
+            SConsole.WriteLine("\"mult множитель1 множитель2 ... множительN\" - перемножает все множители");
+            SConsole.WriteLine("\"percof число процент\" - вычисляет процент от числа");
+            SConsole.WriteLine();
         }
     }
 }
