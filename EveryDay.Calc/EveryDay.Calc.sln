@@ -5,8 +5,6 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EveryDay.Calc.Console", "EveryDay.Calc.Console\EveryDay.Calc.Console.csproj", "{21708543-0AD4-4D6E-AF5E-6206A909A7EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EveryDay.Calc.UnitTest", "UnitTest\EveryDay.Calc.UnitTest.csproj", "{83D7244B-3946-4659-8615-352A777F1C67}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EveryDay.Calc.Calculation", "EveryDay.Calc.Calculation\EveryDay.Calc.Calculation.csproj", "{8A8756E2-F82D-4538-A72F-B2A6C63E71B4}"
 EndProject
 Global
@@ -19,10 +17,6 @@ Global
 		{21708543-0AD4-4D6E-AF5E-6206A909A7EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21708543-0AD4-4D6E-AF5E-6206A909A7EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21708543-0AD4-4D6E-AF5E-6206A909A7EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{83D7244B-3946-4659-8615-352A777F1C67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{83D7244B-3946-4659-8615-352A777F1C67}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{83D7244B-3946-4659-8615-352A777F1C67}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{83D7244B-3946-4659-8615-352A777F1C67}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8A8756E2-F82D-4538-A72F-B2A6C63E71B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A8756E2-F82D-4538-A72F-B2A6C63E71B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A8756E2-F82D-4538-A72F-B2A6C63E71B4}.Release|Any CPU.ActiveCfg = Release|Any CPU

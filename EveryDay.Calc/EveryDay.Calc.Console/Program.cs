@@ -1,5 +1,11 @@
 ﻿using EveryDay.Calc.Calculation;
+using EveryDay.Calc.Calculation.Interfaces;
+using EveryDay.Calc.Calculation.Models;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using SConsole = System.Console;
 
 namespace EveryDay.Calc.Console
@@ -8,65 +14,104 @@ namespace EveryDay.Calc.Console
     {
         static void Main(string[] args)
         {
-            printInformation();
-            string s;
-            s = SConsole.ReadLine();
-            args = s.Split(' ');
-            var oper = args[0];
-           
-            var calc = new Calculator();
-
-            //Определение арифметической операции и вывод результата из соответствующей функции
-            if (String.Equals(oper, "sum", StringComparison.CurrentCultureIgnoreCase))
+            // поиск операций
+            var calc = new Calculator(LoadOperations());
+            
+            // поиск информации
+            //printInformation(calc);
+            while (true)
             {
-                SConsole.WriteLine(calc.Sum(args[1], args[2]));
+                // список операций
+                printInformation(calc);
+                SConsole.WriteLine();
+                SConsole.WriteLine("Введите выбранную операцию:");
+                var oper = SConsole.ReadLine().ToLower();
+                if (oper == "exit") break;
+                SConsole.WriteLine("Введите данные:");
+                string[] s = SConsole.ReadLine().Split(' ');
+                var numbers = new double[s.Count()];
+                int i = 0;
+                foreach (var item in s)
+                {
+                    numbers[i] = Str2Db(s[i]);
+                    i++;
+                }
+                var result = calc.Calc(oper, numbers);
+                if (result == null)
+                {
+                    SConsole.WriteLine("Операция не найдена или произошла ошибка. Введите данные заново");
+                    SConsole.WriteLine();
+                    continue;
+                }
+                SConsole.WriteLine("Результат: ", result.ToString());
+                SConsole.WriteLine();
             }
-            else if (String.Equals(oper, "div", StringComparison.CurrentCultureIgnoreCase))
-            {
-                SConsole.WriteLine(calc.Div(args[1], args[2]));
-            }
-            else if (String.Equals(oper, "sqr", StringComparison.CurrentCultureIgnoreCase))
-            {
-                SConsole.WriteLine(calc.Sqr(args[1]));
-            }
-            else if (String.Equals(oper, "sqrt", StringComparison.CurrentCultureIgnoreCase))
-            {
-                double solve = calc.Sqrt(args[1]);
-                if (solve > 0)
-                    SConsole.WriteLine("{0}, {1}", solve, -solve);
-                else if (solve == 0)
-                    SConsole.WriteLine(solve);
-                else
-                    SConsole.WriteLine("{0}*i, {1}*i, где i^2 = -1", solve, -solve);
-            }
-            else if (String.Equals(oper, "mult", StringComparison.CurrentCultureIgnoreCase))
-            {
-                SConsole.WriteLine(calc.Mult(args));
-            }
-            else if ((String.Equals(oper, "percof", StringComparison.CurrentCultureIgnoreCase)))
-            {
-                SConsole.WriteLine(calc.PercOf(args[1], args[2]));
-            }
-            else
-            {
-                SConsole.WriteLine("Нет такой операции");
-            }
-
             SConsole.ReadKey();
+           
         }
 
-        private static void printInformation()
+        private static IEnumerable<IOperation> LoadOperations()
         {
-            SConsole.WriteLine("Введите входные данные в формате: \"операция операнды\"");
-            SConsole.WriteLine();
-            SConsole.WriteLine("Возможные перации и операнды:");
-            SConsole.WriteLine("\"sum слагаемое1 слагаемое2\" - складывает слагаемое1 и слагаемое2");
-            SConsole.WriteLine("\"div делимое делитель\" - делит делимое на делитель");
-            SConsole.WriteLine("\"sqr число\" - возводит число в квадрат");
-            SConsole.WriteLine("\"sqrt число\" - извлекает квадратный корень из числа");
-            SConsole.WriteLine("\"mult множитель1 множитель2 ... множительN\" - перемножает все множители");
-            SConsole.WriteLine("\"percof число процент\" - вычисляет процент от числа");
-            SConsole.WriteLine();
+            var opers = new List<IOperation>();
+
+            var typeOperation = typeof(IOperation);
+
+            // найти все dll, которые находятся рядом с нашим exe
+            var dlls = Directory.GetFiles(Environment.CurrentDirectory, "*.dll");
+
+            // перебираем
+            foreach (var dll in dlls)
+            {
+                // загружаем сборку из файла
+                var assembly = Assembly.LoadFrom(dll);
+                // получаем типы/классы/интерфейсы из сброрки
+                var types = assembly.GetTypes();
+
+                // перебираем типы
+                foreach (var type in types)
+                {
+                    var interfaces = type.GetInterfaces();
+                    // если тип реализует наш интерфейс 
+                    if (interfaces.Contains(typeOperation))
+                    {
+                        // пытаемся создать экземпляр
+                        var instance = Activator.CreateInstance(type) as IOperation;
+                        if (instance != null)
+                        {
+                            // добавляем в список операций
+                            opers.Add(instance);
+                        }
+                    }
+                }
+            }
+
+            return opers;
         }
+
+
+        private static double Str2Db(string str)
+        {
+            double y;
+            if (!double.TryParse(str, out y))
+            {
+                SConsole.WriteLine("Не удалось преобразовать \"{0}\" в число", str);
+                SConsole.WriteLine("Введите это число заново:");
+                return Str2Db(SConsole.ReadLine());
+            }
+            return y;
+        }
+
+
+        private static void printInformation(Calculator opers)
+        {
+            SConsole.WriteLine("Доступные действия в формате \"(операция) (входные_данные) - описание\":");
+            var namesOper = opers.infoAboutOper();
+            foreach (var nameOper in namesOper)
+            {
+                SConsole.WriteLine(nameOper);
+            }
+            SConsole.WriteLine("\"exit\" - выход из программы");
+        }
+
     }
 }

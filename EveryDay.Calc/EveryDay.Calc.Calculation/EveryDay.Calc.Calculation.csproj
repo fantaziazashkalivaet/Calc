@@ -40,8 +40,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculator.cs" />
+    <Compile Include="interfaces\IOperation.cs" />
+    <Compile Include="Models\perc.cs" />
+    <Compile Include="Models\mult.cs" />
+    <Compile Include="Models\sqrt.cs" />
+    <Compile Include="Models\sqr.cs" />
+    <Compile Include="Models\DivOperation.cs" />
+    <Compile Include="Models\SumOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
