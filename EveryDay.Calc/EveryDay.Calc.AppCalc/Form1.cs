@@ -73,8 +73,6 @@ namespace EveryDay.Calc.AppCalc
                     label3.Text = ex.Message;
                 }
 
-                textBox1.Tag = operation;
-                textBox1.Enter += new System.EventHandler(buttonOper_Click);
 
             
         }
@@ -130,51 +128,7 @@ namespace EveryDay.Calc.AppCalc
 
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-            var button = sender as Button;
-            if (button == null)
-                return;
-            var operation = button.Tag as IOperation;
-            if (operation == null)
-                return;
-
-            var inputs = textBox1.Text.Split(' ');
-            var args = inputs.Select(str => Helper.Str2Db(str));
-
-            operation.Input = args.ToArray();
-
-            try
-            {
-                var result = operation.GetResult();
-
-                var str = new StringBuilder();
-                str.Append(operation.Name + " ( ");
-                foreach (var item in operation.Input)
-                {
-                    str.Append(item.ToString() + ' ');
-                }
-                str.Append(") " + result.ToString());
-                History.Items.Add(str);
-                textBox1.Clear();
-
-                label3.ForeColor = Color.Black;
-                label3.Text = string.Format("{0}", result);
-
-                var baseOper = operation as Operation;
-
-                if (baseOper != null && !string.IsNullOrWhiteSpace(baseOper.Error))
-                {
-                    label3.ForeColor = Color.DarkGoldenrod;
-                    label3.Text = baseOper.Error;
-                }
-            }
-            catch (Exception ex)
-            {
-                label3.ForeColor = Color.Red;
-                label3.Text = ex.Message;
-            }
-        }
+       
 
      
     }
