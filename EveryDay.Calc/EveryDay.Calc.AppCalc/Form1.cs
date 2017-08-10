@@ -47,7 +47,7 @@ namespace EveryDay.Calc.AppCalc
                     var result = operation.GetResult();
 
                     var str = new StringBuilder();
-                    str.Append(operation.Name + " ( ");
+                    str.AppendFormat("{0} ( ", operation.Name);
                     foreach (var item in operation.Input)
                     {
                         str.Append(item.ToString() + ' ');
@@ -123,11 +123,7 @@ namespace EveryDay.Calc.AppCalc
             this.fOperations.ResumeLayout(false);
         }
 
-        private void history_Enter(object sender, EventArgs e)
-        {
-
-        }
-
+      
        
 
      
