@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "Calc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Calc</h2>
+
+<form action="/Home/Result">
+    <table>
+        <tr>
+            <td>Введите слагаемые через пробел:</td>
+            <td>
+                <input type="text" id="arg1" name="arg1" />
+            </td>
+            <td>
+                <input type="submit" value="=" />
+            </td>
+            <td>
+                <span>@ViewBag.result</span>
+            </td>
+        </tr>
+    </table>
+</form>

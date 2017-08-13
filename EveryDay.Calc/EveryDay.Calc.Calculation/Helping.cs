@@ -1,16 +1,22 @@
-﻿using System;
+﻿using EveryDay.Calc.Calculation.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using EveryDay.Calc.Calculation.Interfaces;
 
 namespace EveryDay.Calc.AppCalc
 {
-    class Helper
+    public static class Helping
     {
+        public static double Str2Double(string str)
+        {
+            double result;
+
+            double.TryParse(str, out result);
+
+            return result;
+        }
 
         public static IEnumerable<IOperation> LoadOperations()
         {
@@ -88,13 +94,5 @@ namespace EveryDay.Calc.AppCalc
             return opers;
         }
 
-        public static double Str2Db(string str)
-        {
-            double result;
-
-            double.TryParse(str, out result);
-
-            return result;
-        }
     }
 }

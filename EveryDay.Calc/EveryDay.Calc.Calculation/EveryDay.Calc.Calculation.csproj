@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculator.cs" />
+    <Compile Include="Helping.cs" />
     <Compile Include="interfaces\IOperation.cs" />
     <Compile Include="interfaces\IExtendedOperation.cs" />
     <Compile Include="Models\DivOperation.cs" />

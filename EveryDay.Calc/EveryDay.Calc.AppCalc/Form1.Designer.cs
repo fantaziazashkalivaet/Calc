@@ -47,6 +47,7 @@
             this.textBox1.Size = new System.Drawing.Size(203, 20);
             this.textBox1.TabIndex = 1;
             this.textBox1.Enter += new System.EventHandler(this.buttonOper_Click);
+            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbInput_KeyDown);
             // 
             // label1
             // 
