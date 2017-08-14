@@ -11,7 +11,21 @@ namespace EveryDay.Calc.Web.Repository
     {
         public void Create(Operation obj)
         {
-            throw new NotImplementedException();
+            var connectionString = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=C:\Calc\EveryDay.Calc\EveryDay.Calc.Web\App_Data\Calc.mdf;Integrated Security=True";
+            string queryString = "INSERT into dbo.Operation (Name, Description) values ('" + obj.Name + "', '" + obj.Description + "')";
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+
+                //command.Parameters.AddWithValue("@Name", "lol");
+
+                command.ExecuteNonQuery();
+
+            }
+            //throw new NotImplementedException();
+
+           
         }
 
         public Operation Read(long Id)
@@ -19,7 +33,7 @@ namespace EveryDay.Calc.Web.Repository
             var result = new Operation();
 
             var connectionString = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=C:\Calc\EveryDay.Calc\EveryDay.Calc.Web\App_Data\Calc.mdf;Integrated Security=True";
-            string queryString = "SELECT Id, Name, Description FROM dbo.Operation WHERE dbo.Operation.Id = Id";
+            string queryString = "SELECT Id, Name, Description FROM dbo.Operation WHERE dbo.Operation.Id =" + Id;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -38,15 +52,16 @@ namespace EveryDay.Calc.Web.Repository
             return result;
         }
 
-        public void Update(Operation obj, long id)
+        public void Update(Operation obj)
         {
             var connectionString = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=C:\Calc\EveryDay.Calc\EveryDay.Calc.Web\App_Data\Calc.mdf;Integrated Security=True";
-            string queryString = "UPDATE dbo.Operation SET Name = obj.Name Description = obj.Description WHERE Id = id";
+            string queryString = "UPDATE dbo.Operation SET Name = '" + obj.Name + "', Description = '" + obj.Description + "' WHERE Id = " + obj.Id;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 SqlCommand command = new SqlCommand(queryString, connection);
                 connection.Open();
+                command.ExecuteNonQuery();
 
             }
             //throw new NotImplementedException();
@@ -54,7 +69,16 @@ namespace EveryDay.Calc.Web.Repository
 
         public void Delete(long Id)
         {
-            throw new NotImplementedException();
+            var connectionString = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=C:\Calc\EveryDay.Calc\EveryDay.Calc.Web\App_Data\Calc.mdf;Integrated Security=True";
+            string queryString = "UPDATE dbo.Operation SET IsDelited = 'True' WHERE Id = " + Id;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(queryString, connection);
+                connection.Open();
+                command.ExecuteNonQuery();
+
+            }
         }
 
 

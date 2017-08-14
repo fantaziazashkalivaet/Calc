@@ -39,14 +39,16 @@ namespace WebCalc.Controllers
            // var wtff = wtf.Read((long)1);
 
             var wtf = new Operation();
-            wtf.Id = 1;
+            wtf.Id = 4;
             wtf.Name = "sim";
             wtf.Description = "lol";
 
+          //  var wtff = new OperationRepository();
+          //  wtff.Create(wtf);
             var wtff = new OperationRepository();
-            wtff.Update(wtf, 1);
+            wtff.Delete(5);
 
-            var wtfff = wtff.Read((long)1);
+            var wtfff = wtff.Read(1);
 
 
             var nameOperation = new string[Operations.Count()];

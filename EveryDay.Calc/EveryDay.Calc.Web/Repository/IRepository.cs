@@ -12,7 +12,7 @@ namespace EveryDay.Calc.Web.Repository
 
         T Read(long Id);
 
-        void Update(T obj, long id);
+        void Update(T obj);
 
         void Delete(long Id);
 
