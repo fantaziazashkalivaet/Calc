@@ -1,5 +1,7 @@
-﻿using System;
+﻿using EveryDay.Calc.Webcalc.Repository;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -7,8 +9,14 @@ using System.Web;
 
 namespace EveryDay.Calc.Web.Repository
 {
-    public class OperationRepository : IRepository<Operation>
+    public class OperationRepository : BaseRepository<Operation>, IOperationRepository
     {
+        public OperationRepository()
+            : base("Operation", new[] { "Name", "Description", "IsDeleted" })
+        {
+        }
+        
+        /*
         public void Create(Operation obj)
         {
             var connectionString = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=C:\Calc\EveryDay.Calc\EveryDay.Calc.Web\App_Data\Calc.mdf;Integrated Security=True";
@@ -108,20 +116,28 @@ namespace EveryDay.Calc.Web.Repository
             }
             return result;
         }
+         * */
 
-       private Operation ReadSingleRow(IDataRecord record)
+       public override Operation ReadSingleRow(SqlDataReader record)
        {
-           return new Operation()
+           var obj = new Operation()
            {
                Id = record.GetInt64(0),
-               Name = record.GetString(1)
+               Name = record.GetString(1),
+               //Description = record.GetString(2)
            };
-           //Console.WriteLine(String.Format("{0}, {1}", record[0], record[1]));
+           return obj;
+       }
+
+       public override string WriteSingleRow(Operation obj)
+       {
+           return string.Format("'{0}', '{1}', {2}", obj.Name, obj.Description, obj.IsDeleted ? 1 : 0);
        }
 
       
     }
 
+    [Table("Operation")]
     public class Operation
     {
         public long Id { get; set; }

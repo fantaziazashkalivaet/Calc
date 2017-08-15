@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
 using EveryDay.Calc.Web.Models;
+using EveryDay.Calc.Webcalc.Models;
 
 namespace EveryDay.Calc.Web.Controllers
 {

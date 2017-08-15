@@ -3,8 +3,11 @@ using EveryDay.Calc.AppCalc;
 using EveryDay.Calc.Calculation;
 using EveryDay.Calc.Calculation.Interfaces;
 using EveryDay.Calc.Web.Repository;
+using EveryDay.Calc.Webcalc.Repository;
+//using EveryDay.Calc.Webcalc.Repository;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -12,82 +15,104 @@ using WebCalc.Models;
 
 namespace WebCalc.Controllers
 {
+    [Authorize]
     public class CalcController : Controller
     {
-        private IRepository<Operation> OpRepository { get; set; }
+        #region Private Memebers
+
+        private IOperationRepository OpRepository { get; set; }
+
+        private IOperationResultRepository OperResultRepository { get; set; }
+
+        private IUserRepository userRepository { get; set; }
+
         private Calculator Calculator { get; set; }
 
-       private IEnumerable<Operation> Operations { get; set; }
+        private IEnumerable<Operation> Operations { get; set; }
 
-        public CalcController()
+        private IEnumerable<long> TopOperationIds { get; set; }
+
+        #endregion
+        public CalcController() { }
+        public CalcController(IOperationRepository OpRepository,
+            IOperationResultRepository OperResultRepository,
+            IUserRepository userRepository)
         {
-           // Operations = Helping.LoadOperations();
-            OpRepository = new OperationRepository();
+            //var extensionPath = Server.MapPath("~/App_Data/Extensions");
+            // Operations = Helper.LoadOperations();
+
+            if (Calculator == null)
+            {
+                Calculator = new Calculator(Helping.LoadOperations());
+            }
+
+            this.OpRepository = OpRepository;
+            this.OperResultRepository = OperResultRepository;
+            this.userRepository = userRepository;
 
             Operations = OpRepository.GetAll();
-
+            TopOperationIds = OperResultRepository.GetTopOperations(1, 2);
         }
         //
         // GET: /Calc/
         [HttpGet]
-        public ActionResult Index(string operation)
+        public ActionResult Index()
         {
-            var model = new OperationResult();
-            model.Operation = operation;
-
-           // var wtf = new OperationRepository();
-           // var wtff = wtf.Read((long)1);
-
-            var wtf = new Operation();
-            wtf.Id = 4;
-            wtf.Name = "sim";
-            wtf.Description = "lol";
-
-          //  var wtff = new OperationRepository();
-          //  wtff.Create(wtf);
-            var wtff = new OperationRepository();
-            wtff.Delete(5);
-
-            var wtfff = wtff.Read(1);
-
-
-            var nameOperation = new string[Operations.Count()];
-            int i = 0;
-            foreach (var item in Operations)
-            {
-                nameOperation[i] = item.Name;
-                i++;
-            }
-
-            ViewBag.nameOperation = nameOperation;
+            var model = new OperationResult(Operations, TopOperationIds);
             return View(model);
         }
 
         [HttpPost]
         public ActionResult Index(OperationResult model, string inputs)
         {
-          
-            if (Calculator == null)
-            {
-                var extensionPath = Server.MapPath("~/App_Data/Extensions");
-                Calculator = new Calculator(Helping.LoadOperations());
-            }
-
+            model.SetViewModel(Operations, TopOperationIds);
             model.ExecutionDate = DateTime.Now;
             model.Inputs = inputs.Split(' ').Select(Helping.Str2Double).ToArray();
 
-            model.Result = Calculator.Calc(model.Operation, model.Inputs);
+            string error = "";
+            double? result;
 
-            
-            var nameOperation = new string[Operations.Count()];
-            int i = 0;
-            foreach (var item in Operations)
+            // Проверяем, вычисляли уже такую операцию или нет
+            if (OperResultRepository.Check(model.Operation, inputs, out result, out error))
             {
-                nameOperation[i] = item.Name;
-                i++;
+                model.ExecutionTime = 0;
+                model.Result = result;
+                ViewBag.Error = error;
+                return View(model);
             }
 
-            ViewBag.nameOperation = nameOperation;
+            var dbOperation = Operations.FirstOrDefault(o => o.Id == model.Operation);
+            var operName = dbOperation != null ? dbOperation.Name : "";
+
+            try
+            {
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+                model.Result = Calculator.Calc(operName, model.Inputs);
+                stopWatch.Stop();
+                model.ExecutionTime = stopWatch.ElapsedMilliseconds;
+            }
+            catch (Exception ex)
+            {
+                error = ex.Message;
+            }
+
+            #region Сохраняем результат в БД
+
+            var opr = new OperResult()
+            {
+                OperationId = model.Operation,
+                Inputs = inputs,
+                ExecutionDate = model.ExecutionDate,
+                ExecutionTime = model.ExecutionTime,
+                Result = model.Result,
+                Error = error,
+                UserId = 1 // временно
+            };
+
+            OperResultRepository.Create(opr);
+
+            #endregion
 
             return View(model);
         }
